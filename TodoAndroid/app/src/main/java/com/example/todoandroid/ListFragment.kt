@@ -13,6 +13,7 @@ import android.view.inputmethod.InputBinding
 import androidx.appcompat.resources.Compatibility.Api21Impl.inflate
 import androidx.core.content.res.ColorStateListInflaterCompat.inflate
 import androidx.core.graphics.drawable.DrawableCompat.inflate
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.todoandroid.adapter.TarefaAdapter
@@ -25,6 +26,7 @@ class ListFragment : Fragment() {
 
 
     private lateinit var binding: FragmentListBinding
+    private val mainViewModel: MainViewModel by activityViewModels()
 
 
     @SuppressLint("MissingInflatedId")
@@ -35,6 +37,7 @@ class ListFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentListBinding.inflate(layoutInflater, container, false)
 
+        mainViewModel.listTarefa()
 
         val adapter = TarefaAdapter()
         binding.RecyclerTarefa.layoutManager = LinearLayoutManager(context)
@@ -45,6 +48,12 @@ class ListFragment : Fragment() {
 
         binding.floatingActionButton.setOnClickListener {
             findNavController().navigate(R.id.action_listFragment_to_formFragment)
+        }
+
+        mainViewModel.myTarefaResponse.observe(viewLifecycleOwner){
+            resources -> if (resources.body() != null){
+                adapter.setList(resources.body()!!)
+        }
         }
 
         binding.RecyclerTarefa
